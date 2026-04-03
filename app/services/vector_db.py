@@ -4,21 +4,23 @@ import math
 import urllib.request
 from app.core.config import settings
 
+import gzip
+
 # A pure-python in-memory vector database to bypass Windows SQLite/ChromaDB segfaults
-DB_FILE = os.path.join(settings.VECTOR_DB_PATH, "simple_db.json")
+DB_FILE = os.path.join(settings.VECTOR_DB_PATH, "simple_db.json.gz")
 memory_db = []
 
 def load_db():
     global memory_db
     if os.path.exists(DB_FILE):
         try:
-            with open(DB_FILE, "r", encoding="utf-8") as f:
+            with gzip.open(DB_FILE, "rt", encoding="utf-8") as f:
                 memory_db = json.load(f)
         except Exception:
             memory_db = []
 
 def save_db():
-    with open(DB_FILE, "w", encoding="utf-8") as f:
+    with gzip.open(DB_FILE, "wt", encoding="utf-8") as f:
         json.dump(memory_db, f)
 
 load_db()
